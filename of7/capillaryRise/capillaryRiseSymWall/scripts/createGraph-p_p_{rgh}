@@ -1,0 +1,46 @@
+#!/bin/sh
+
+# paths to data
+PWD=`pwd`
+#PWD=`dirname ${PWD}`
+CASEDIR=`basename ${PWD%/*}`
+
+NAMEp=x0.5z0.5_p_p_rgh
+NAME=$NAMEp".xy"
+
+# DATA file
+DATA="./postProcessing/sample/0.5/$NAME"
+
+IMG=png
+#TERMINAL="terminal $EXT size 640, 480 font \"Arial,18\""
+TERMINAL="terminal $IMG size 740, 480 font \"Arial,18\""
+
+    gnuplot<<EOF
+    set style line 1 linewidth 3 linecolor rgbcolor "#FF0000" # red
+    set style line 2 linewidth 3 linecolor rgbcolor "#0000FF" # blue
+    set style line 3 linewidth 3 linecolor rgbcolor "#808000" # olive
+    set style line 4 linewidth 3 linecolor rgbcolor "#800080" # purple
+    set style line 5 linewidth 3 linecolor rgbcolor "#008000" # green
+    set style line 6 linewidth 3 linecolor rgbcolor "#00ffff" # aqua
+    set style line 7 linewidth 3 linecolor rgbcolor "#000080" # navy
+    set style line 8 linewidth 3 linecolor rgbcolor "#800000" # maroon
+
+    set tmargin 2
+    set label 1 center at screen 0.5,0.95 "$CASEDIR : Values of p and p_{rgh} in Y-axis Direction" noenhanced
+
+    set $TERMINAL
+    set output '$NAMEp.$IMG'
+    set xlabel 'p, p_{rhg}(kg m/s^2)'
+    set ylabel 'height, Y(m)'
+    set grid
+    set key right center #top
+
+    set autoscale xy
+
+
+    plot \
+	"$DATA" using 5:2 w l linestyle 1 title "p_{rgh}",\
+	"$DATA" using 4:2 w l linestyle 2 title "p"
+EOF
+
+#------------------------------------------------------------------------------

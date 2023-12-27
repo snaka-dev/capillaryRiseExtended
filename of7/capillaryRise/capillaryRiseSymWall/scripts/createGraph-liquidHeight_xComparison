@@ -1,0 +1,68 @@
+#!/bin/sh
+
+# test if gnuplot exists on the system
+if ! which gnuplot > /dev/null 2>&1
+then
+    echo "gnuplot not found - skipping graph creation" >&2
+    exit 1
+fi
+
+# paths to data
+PWD=`pwd`
+#PWD=`dirname ${PWD}`
+CASEDIR=`basename ${PWD%/*} `
+
+# DATA file
+DATA01="./postProcessing/interfaceHeight/0/height.dat"
+
+if [ ! -d ${DATA01%/*} ]
+then
+    echo "createGraphs: results not available in directory ${DATA01%/*}"
+    exit 0
+fi
+
+if [ ! -f $DATA01 ]
+then
+    echo "createGraphs: results file not available: $DATA01"
+    echo "   data file name depends on OpenFOAM version"
+    exit 0
+fi
+
+IMG=png
+#TERMINAL="terminal $IMG size 640, 480 font \"Arial,18\""
+TERMINAL="terminal $IMG size 740, 480 font \"Arial,18\""
+SCALE="1e+3" # m to mm
+
+    gnuplot<<EOF
+    set style line 1 linewidth 3 linecolor rgbcolor "#FF0000" # red
+    set style line 2 linewidth 3 linecolor rgbcolor "#0000FF" # blue
+    set style line 3 linewidth 3 linecolor rgbcolor "#808000" # olive
+    set style line 4 linewidth 3 linecolor rgbcolor "#800080" # purple
+    set style line 5 linewidth 3 linecolor rgbcolor "#008000" # green
+    set style line 6 linewidth 3 linecolor rgbcolor "#00ffff" # aqua
+    set style line 7 linewidth 3 linecolor rgbcolor "#000080" # navy
+    set style line 8 linewidth 3 linecolor rgbcolor "#800000" # maroon
+
+    set tmargin 2
+    set label 1 center at screen 0.5,0.95 "$CASEDIR : liquid level" noenhanced
+
+    set $TERMINAL
+    set output "liquidHeight_xComparison.$IMG"
+    set xlabel "time [s]"
+    set ylabel "Liquid Height [mm]"
+    set grid
+    set key right bottom 
+
+    set autoscale x
+    set autoscale y
+	
+    plot \
+      "$DATA01" u (\$1):(\$2*$SCALE) title "x=0mm(wall)" \
+                                    with lines linestyle 1, \
+      "$DATA01" u (\$1):(\$4*$SCALE) title "x=0.25mm(center)" \  # Center of simulation region
+                                    with lines linestyle 2, \
+      "$DATA01" u (\$1):(\$6*$SCALE) title "x=0.50mm(symWall)" \
+                                    with lines linestyle 3, \
+EOF
+
+#------------------------------------------------------------------------------

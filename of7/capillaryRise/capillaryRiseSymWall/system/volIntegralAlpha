@@ -1,0 +1,24 @@
+//type            volRegion; // for OpenFOAM 4
+    type            volFieldValue; // for OpenFOAM 6, v1806
+    libs ("libfieldFunctionObjects.so");
+    enabled         true;
+
+    writeControl    adjustableRunTime; //writeTime;
+    writeInterval   0.01; // this entry is needed for runTime/adjustableRunTime
+
+    log             true; //false; //
+    writeFields     false; //true;
+
+    regionType      all; //cellZone;
+    //name      outlet; // this entry is needed for cellZone regionType.
+
+    operation       volIntegrate; 
+                                  //sum, weightedSum, sumMag, average, weightedAverage;
+                                  //volAverage, weightedVolAverage, volIntegrate, min, max CoV
+    //weightField     rhoPhi;
+
+    fields
+    (
+        alpha.water
+    );
+

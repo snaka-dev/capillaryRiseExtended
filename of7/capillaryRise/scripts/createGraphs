@@ -1,0 +1,8 @@
+#!/bin/sh
+
+./scripts/createGraph-liquidHeight_averagedFromVolume
+./scripts/createGraph-liquidHeight_center
+./scripts/createGraph-liquidHeight_xComparison
+./scripts/createGraph-p_p_{rgh}
+
+#------------------------------------------------------------------------------
